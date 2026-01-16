@@ -10,9 +10,10 @@ function App() {
      const setterForOutput =(e)=>{
         setOutput(e);
     }
+    const [language,setLanguage]=useState("javascript")
   const children = (<div className='items-center w-screen flex flex-col'>
-    <Header />
-    <CodeEditor />
+    <Header setterForOutput={setterForOutput} setLanguage={setLanguage}/>
+    <CodeEditor language={language}/>
     <Input/>
     <Output output={output}/>
     </div>)

@@ -7,13 +7,14 @@ import { useState } from 'react'
 import React from 'react'
 function App() {
   const [output,setOutput] = useState("//Console \n Result will be shown here... \n \n \n \n\n")
+  const [code,setCode]=useState();
      const setterForOutput =(e)=>{
         setOutput(e);
     }
     const [language,setLanguage]=useState("javascript")
-  const children = (<div className='items-center w-screen flex flex-col'>
-    <Header setterForOutput={setterForOutput} setLanguage={setLanguage}/>
-    <CodeEditor language={language}/>
+  const children = (<div className='items-center w-screen flex flex-col relative'>
+    <Header setterForOutput={setterForOutput} setLanguage={setLanguage} code={code}/>
+    <CodeEditor language={language} setCode={setCode}/>
     <Input/>
     <Output output={output}/>
     </div>)

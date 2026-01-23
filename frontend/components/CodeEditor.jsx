@@ -1,8 +1,9 @@
 import React from 'react'
 import { Editor } from '@monaco-editor/react'
-function CodeEditor({language}) {
+function CodeEditor({language,setCode}) {
   const getCode =(e)=>{
-    console.log(e)
+    // console.log(e)
+    setCode(e)
   }
   return (
     <div className='w-[85%] p-8 mt-4 rounded-lg bg-white/5 backdrop-blur-md border-b border-white/10 z-50 transition-all'>

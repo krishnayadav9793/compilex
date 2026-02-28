@@ -17,7 +17,7 @@ import {
  */
 function Header({ setterForOutput, setLanguage, code, isCpMode, toggleCpMode }) {
   const [isRunning, setIsRunning] = useState(false);
-
+  
   /**
    * executeCode
    * Communicates with the local Node.js/Express backend to run the code.
@@ -92,17 +92,27 @@ function Header({ setterForOutput, setLanguage, code, isCpMode, toggleCpMode }) 
         {/* CP Mode Toggle */}
         <button 
           onClick={toggleCpMode}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-300 font-medium text-sm
+          className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all duration-300 font-medium text-sm group
             ${isCpMode 
-              ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]' 
+              ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.15)]' 
               : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'
             }`}
         >
-          <Trophy size={16} className={isCpMode ? 'animate-bounce' : ''} />
-          <span className="hidden xs:inline">CP Mode</span>
-          <div className={`w-1.5 h-1.5 rounded-full ${isCpMode ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]' : 'bg-slate-600'}`}></div>
+          <Trophy size={16} className={`${isCpMode ? 'text-amber-400 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]' : 'text-slate-500'}`} />
+          <span className="hidden xs:inline tracking-wide">CP Mode</span>
+          
+          <div className="relative flex items-center justify-center">
+            {isCpMode && (
+              <div className="absolute w-3 h-3 bg-amber-400/30 rounded-full animate-ping"></div>
+            )}
+            <div className={`w-2 h-2 rounded-full transition-all duration-500 
+              ${isCpMode 
+                ? 'bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,1)] animate-pulse' 
+                : 'bg-slate-600 shadow-none'
+              }`}>
+            </div>
+          </div>
         </button>
-
         {/* Language Selection */}
         <div className='flex items-center gap-2 bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-xl transition-colors focus-within:ring-2 focus-within:ring-indigo-500/50'>
           <label htmlFor="language-select" className="text-slate-500 font-bold text-[10px] uppercase tracking-widest hidden lg:block">

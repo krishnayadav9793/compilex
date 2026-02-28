@@ -1,5 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
 int main(){
-    cout<<"Helllo world"<<endl;
+    cout<<"Hello world"<<endl;
+    cout<<"Mayank soni"<<endl;
 }

@@ -1,105 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Trophy, 
   Play, 
   Code2, 
-  Settings 
+  Settings,
+  Sparkles,
+  ChevronDown
 } from 'lucide-react';
 
 /**
  * Header Component for NexusCode IDE
- * * Props:
- * @param {Function} setterForOutput - Updates the parent's output state with execution results.
- * @param {Function} setLanguage - Handles the onChange event for the language selector.
- * @param {string} code - The current source code to be sent to the backend.
- * @param {boolean} isCpMode - Boolean state indicating if Competitive Programming mode is active.
- * @param {Function} toggleCpMode - Function to flip the isCpMode state.
  */
-function Header({ setterForOutput, setLanguage, code, isCpMode, toggleCpMode }) {
-  const [isRunning, setIsRunning] = useState(false);
-  
-  /**
-   * executeCode
-   * Communicates with the local Node.js/Express backend to run the code.
-   * Manages a local 'isRunning' state to provide visual feedback and prevent 
-   * duplicate requests during pending execution.
-   */
-  const executeCode = async (codeSnippet) => {
-    setIsRunning(true);
-    try {
-      const languageValue = document.getElementById("language-select").value;
-      
-      const execution = await fetch("http://localhost:3000/run", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          code: codeSnippet, 
-          language: languageValue 
-        })
-      });
+function Header({ isCpMode, toggleCpMode, language, setLanguage, executeCode, isRunning }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-      if (!execution.ok) {
-        throw new Error(`Server responded with ${execution.status}`);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
       }
-
-      const res = await execution.json();
-      setterForOutput(res.output);
-    } catch (e) {
-      console.error("Execution Error:", e);
-      setterForOutput(`Error: ${e.message}. Ensure backend is running on port 3000.`);
-    } finally {
-      setIsRunning(false);
     }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const LANGUAGES = {
+    javascript: "JavaScript",
+    python: "Python 3",
+    java: "Java",
+    cpp: "C++",
+    c: "C"
   };
 
   return (
-    <header className='flex flex-col sm:flex-row justify-between items-center w-full px-6 py-3 bg-white/5 backdrop-blur-md border-b border-white/10 z-[100] transition-all gap-4'>
+    <header className="flex flex-col sm:flex-row justify-between items-center w-full px-6 py-3 bg-slate-900/40 backdrop-blur-md border-b border-white/10 z-[100] transition-all gap-4">
       
-      {/* Brand & Primary Action */}
-      <div className='flex items-center gap-6 w-full sm:w-auto'>
-        <div className="hidden md:flex items-center gap-2 group cursor-pointer">
-          <div className="bg-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-500 transition-colors">
+      {/* Brand & Primary Actions */}
+      <div className="flex items-center justify-between sm:justify-start gap-6 w-full sm:w-auto">
+        <div className="flex items-center gap-2 group cursor-pointer">
+          <div className="bg-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20 font-mono">
             <Code2 size={20} className="text-white" />
           </div>
-          <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent select-none">
-            NexusCode
-          </span>
+          <div className="flex flex-col">
+            <span className="font-bold text-base tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent select-none font-sans">
+              NexusCode
+            </span>
+            <span className="text-[9px] text-indigo-400 font-bold uppercase tracking-wider font-mono -mt-1">
+              v2.0 IDE
+            </span>
+          </div>
         </div>
 
+        {/* Run Button */}
         <button 
           disabled={isRunning}
-          className={`flex items-center justify-center gap-2 text-white w-full sm:w-auto px-8 py-2.5 rounded-xl transition-all font-semibold tracking-wide
+          onClick={executeCode}
+          className={`flex items-center justify-center gap-2 text-white px-6 py-2 rounded-xl transition-all font-semibold text-sm tracking-wide cursor-pointer font-sans
             ${isRunning 
-              ? 'bg-slate-700 cursor-not-allowed opacity-80' 
-              : 'bg-green-600 hover:bg-green-500 border border-green-500/50 hover:border-green-400 shadow-[0_0_15px_rgba(22,163,74,0.3)] hover:shadow-[0_0_20px_rgba(22,163,74,0.5)] active:scale-95'
+              ? 'bg-slate-800 border border-slate-700 cursor-not-allowed opacity-80' 
+              : 'bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 hover:border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.25)] hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] active:scale-95'
             }`}
-          onClick={() => executeCode(code)}
         >
           {isRunning ? (
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white" />
           ) : (
-            <Play size={16} fill="currentColor" />
+            <Play size={14} fill="currentColor" />
           )}
           <span>{isRunning ? 'Running...' : 'Run'}</span>
         </button>
       </div>
 
       {/* Configuration & Layout Controls */}
-      <div className='flex flex-wrap items-center justify-center sm:justify-end gap-3 w-full sm:w-auto'>
+      <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 w-full sm:w-auto">
         
         {/* CP Mode Toggle */}
         <button 
           onClick={toggleCpMode}
-          className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all duration-300 font-medium text-sm group
+          className={`flex items-center gap-2.5 px-4 py-2 rounded-xl border transition-all duration-300 font-medium text-xs sm:text-sm group cursor-pointer font-sans
             ${isCpMode 
-              ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.15)]' 
+              ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.15)] hover:bg-amber-500/15' 
               : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'
             }`}
         >
-          <Trophy size={16} className={`${isCpMode ? 'text-amber-400 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]' : 'text-slate-500'}`} />
-          <span className="hidden xs:inline tracking-wide">CP Mode</span>
+          <Trophy size={14} className={`${isCpMode ? 'text-amber-400 drop-shadow-[0_0_4px_rgba(245,158,11,0.5)]' : 'text-slate-500'}`} />
+          <span className="tracking-wide">CP Mode</span>
           
           <div className="relative flex items-center justify-center">
             {isCpMode && (
@@ -107,32 +92,52 @@ function Header({ setterForOutput, setLanguage, code, isCpMode, toggleCpMode }) 
             )}
             <div className={`w-2 h-2 rounded-full transition-all duration-500 
               ${isCpMode 
-                ? 'bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,1)] animate-pulse' 
+                ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,1)]' 
                 : 'bg-slate-600 shadow-none'
               }`}>
             </div>
           </div>
         </button>
-        {/* Language Selection */}
-        <div className='flex items-center gap-2 bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-xl transition-colors focus-within:ring-2 focus-within:ring-indigo-500/50'>
-          <label htmlFor="language-select" className="text-slate-500 font-bold text-[10px] uppercase tracking-widest hidden lg:block">
-            Engine
-          </label>
-          <select 
-            id="language-select" 
-            defaultValue="javascript" 
-            className='bg-transparent text-slate-200 text-sm py-1.5 outline-none cursor-pointer min-w-[120px]'
-            onChange={(e) => setLanguage(e)}
+
+        {/* Custom Language Selection Dropdown */}
+        <div className="relative font-mono" ref={dropdownRef}>
+          <button 
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="flex items-center justify-between gap-3 bg-slate-900/80 border border-slate-750 hover:border-slate-500 px-4 py-2 rounded-xl text-slate-200 text-xs sm:text-sm font-semibold font-mono outline-none cursor-pointer transition-all duration-200 select-none shadow-md hover:shadow-lg focus:ring-2 focus:ring-indigo-500/50"
           >
-            <option value="javascript" className="bg-slate-900">JavaScript</option>
-            <option value="python" className="bg-slate-900">Python 3</option>
-            <option value="java" className="bg-slate-900">Java</option>
-            <option value="cpp" className="bg-slate-900">C++</option>
-          </select>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+              <span className="text-[9px] text-slate-500 uppercase tracking-widest mr-1 select-none">Language</span>
+              <span className="text-slate-200">{LANGUAGES[language] || language}</span>
+            </div>
+            <ChevronDown size={14} className={`text-slate-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+          
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-slate-950/95 border border-white/10 rounded-xl shadow-2xl z-[200] overflow-hidden backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150">
+              {Object.entries(LANGUAGES).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setLanguage(key);
+                    setIsDropdownOpen(false);
+                  }}
+                  className={`flex items-center justify-between w-full px-4 py-3 text-xs text-left cursor-pointer transition-all border-b border-white/[0.03] last:border-0 font-mono font-medium
+                    ${language === key 
+                      ? 'bg-indigo-600/90 text-white font-bold' 
+                      : 'text-slate-350 hover:bg-white/5 hover:text-white'
+                    }`}
+                >
+                  <span>{label}</span>
+                  {language === key && <span className="w-1.5 h-1.5 bg-white rounded-full"></span>}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <button className="p-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
-          <Settings size={20} />
+        <button className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer">
+          <Settings size={18} />
         </button>
       </div>
     </header>

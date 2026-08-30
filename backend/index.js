@@ -1,4 +1,6 @@
 import express from "express"
+import "./worker.js"
+
 // import { Router } from "express"
 import router from "./routes/run.js"
 import cors from 'cors'

@@ -1,178 +1,508 @@
-import React, { useState } from 'react';
-import Header from '../components/Header.jsx';
-import CodeEditor from '../components/CodeEditor.jsx';
-import CompilerBackground from '../components/CompilerBg.jsx';
-import Input from '../components/Input.jsx';
-import Output from '../components/Output.jsx';
-import CPMode from '../components/CPMode.jsx';
+import React, { useState, useEffect } from 'react';
+import { ThemeProvider } from './components/Common/ThemeContext';
+import CompilerBackground from '../components/CompilerBg';
+import Navbar from './components/Navigation/Navbar';
+import SplashScreen from './components/Splash/SplashScreen';
+import NormalPlayground from './components/NormalMode/NormalPlayground';
+import DynamicCPMode from './components/CPMode/DynamicCPMode';
+import ExecutionLoaderModal from './components/Modals/ExecutionLoaderModal';
+import AIExplanationDrawer from './components/Modals/AIExplanationDrawer';
+import SubmissionsModal from './components/Modals/SubmissionsModal';
+import { BOILERPLATES, CP_TEMPLATES, PRESETS } from './utils/cpPresets';
 
-const BOILERPLATES = {
-  javascript: `// Enter your JavaScript code here\nconsole.log("Hello, World!");\n`,
-  python: `# Enter your Python code here\nprint("Hello, World!")\n`,
-  java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Enter your Java code here\n        System.out.println("Hello, World!");\n    }\n}\n`,
-  cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Enter your C++ code here\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n`,
-  c: `#include <stdio.h>\n\nint main() {\n    // Enter your C code here\n    printf("Hello, World!\\n");\n    return 0;\n}\n`
-};
+function MainApp() {
+  // Splash Screen state
+  const [showSplash, setShowSplash] = useState(true);
 
-function App() {
-  const [code, setCode] = useState(BOILERPLATES.javascript);
+  // Navigation mode: 'normal' | 'cp'
+  const [currentMode, setCurrentMode] = useState('normal');
+
+  // Language state
+  const [language, setLanguage] = useState('cpp');
+
+  // Normal mode code map (persists code per language with default templates)
+  const [normalCodeMap, setNormalCodeMap] = useState({
+    cpp: BOILERPLATES.cpp,
+    c: BOILERPLATES.c,
+    python: BOILERPLATES.python,
+    java: BOILERPLATES.java,
+    javascript: BOILERPLATES.javascript
+  });
+
   const [input, setInput] = useState("");
-  const [expectedOutput, setExpectedOutput] = useState("");
+
+  // Normal mode output state
   const [output, setOutput] = useState({
     stdout: "",
     stderr: "",
     error: "",
     success: null,
-    systemLog: "Console initialized. Ready to execute code."
+    systemLog: "Console initialized. Ready to execute code.",
+    executionTime: "0.0s",
+    memory: "6.0 MB"
   });
-  const [language, setLanguage] = useState("javascript");
-  const [isCpMode, setCpMode] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
 
-  const toggleCpMode = () => {
-    const nextMode = !isCpMode;
-    setCpMode(nextMode);
-    if (nextMode && !input.trim()) {
-      setInput("-2 1 -3 4 -1 2 1 -5 4");
-      setExpectedOutput("6");
+  // Dynamic CP Mode state
+  const [cpStatement, setCpStatement] = useState(PRESETS[0].statement);
+  const [cpInput, setCpInput] = useState(PRESETS[0].input);
+  const [cpCodeMap, setCpCodeMap] = useState({
+    cpp: PRESETS[0].solutions.cpp,
+    c: PRESETS[0].solutions.c,
+    python: PRESETS[0].solutions.python,
+    java: PRESETS[0].solutions.java,
+    javascript: PRESETS[0].solutions.javascript
+  });
+  const [lastJudgeResult, setLastJudgeResult] = useState(null);
+
+  // Execution Loader Modal state (Screen 8)
+  const [loaderModal, setLoaderModal] = useState({
+    isOpen: false,
+    status: "compiling", // "compiling" | "accepted" | "wrong_answer" | "error"
+    result: null
+  });
+
+  // AI Explanation Drawer state (Screen 9)
+  const [aiDrawer, setAiDrawer] = useState({
+    isOpen: false,
+    data: null
+  });
+
+  // Submissions History (Screen 10)
+  const [submissions, setSubmissions] = useState(() => {
+    try {
+      const saved = localStorage.getItem('codesphere_submissions');
+      return saved ? JSON.parse(saved) : [
+        {
+          title: "Maximum Subarray (Kadane's)",
+          status: "Accepted",
+          language: "cpp",
+          executionTime: "0.3s",
+          memory: "6.1 MB",
+          timestamp: "10 mins ago"
+        }
+      ];
+    } catch {
+      return [];
+    }
+  });
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+
+  // Server health indicator
+  const [serverOnline, setServerOnline] = useState(true);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sync submissions to local storage
+  useEffect(() => {
+    try {
+      localStorage.setItem('codesphere_submissions', JSON.stringify(submissions));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [submissions]);
+
+  // Check server health
+  useEffect(() => {
+    const checkServer = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/run");
+        if (res.ok) setServerOnline(true);
+      } catch {
+        setServerOnline(false);
+      }
+    };
+    checkServer();
+    const interval = setInterval(checkServer, 20000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Current active codes for Normal and CP Mode
+  const currentNormalCode = normalCodeMap[language] || BOILERPLATES[language] || "";
+  const currentCpCode = cpCodeMap[language] || CP_TEMPLATES[language] || "";
+
+  // Handlers for Normal Mode code
+  const handleNormalCodeChange = (newCode) => {
+    setNormalCodeMap(prev => ({
+      ...prev,
+      [language]: newCode
+    }));
+  };
+
+  const handleResetNormalTemplate = () => {
+    setNormalCodeMap(prev => ({
+      ...prev,
+      [language]: BOILERPLATES[language]
+    }));
+  };
+
+  // Handlers for CP Mode code
+  const handleCpCodeChange = (newCode) => {
+    setCpCodeMap(prev => ({
+      ...prev,
+      [language]: newCode
+    }));
+  };
+
+  const handleResetCpTemplate = () => {
+    const matchingPreset = PRESETS.find(p => p.statement.trim() === cpStatement.trim());
+    if (matchingPreset && matchingPreset.solutions && matchingPreset.solutions[language]) {
+      setCpCodeMap(prev => ({
+        ...prev,
+        [language]: matchingPreset.solutions[language]
+      }));
+    } else {
+      setCpCodeMap(prev => ({
+        ...prev,
+        [language]: CP_TEMPLATES[language]
+      }));
     }
   };
 
+  // Central language switcher
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
-    // Automatically switch boilerplate if current code is empty or is one of the other boilerplates
-    if (!code || Object.values(BOILERPLATES).some(bp => bp.trim() === code.trim())) {
-      setCode(BOILERPLATES[newLang] || "");
+
+    // In CP Mode, if active problem matches a preset, load that preset's solution in the new language
+    const matchingPreset = PRESETS.find(p => p.statement.trim() === cpStatement.trim());
+    if (matchingPreset && matchingPreset.solutions && matchingPreset.solutions[newLang]) {
+      setCpCodeMap(prev => ({
+        ...prev,
+        [newLang]: matchingPreset.solutions[newLang]
+      }));
     }
   };
 
-  const executeCode = async () => {
+  // Normal Mode execution
+  const executeNormalCode = async () => {
     setIsRunning(true);
+    setLoaderModal({
+      isOpen: true,
+      status: "compiling",
+      result: null
+    });
+
     setOutput(prev => ({
       ...prev,
-      systemLog: "Connecting to server and preparing runtime...",
+      systemLog: "Compiling code on engine...",
       success: null
     }));
 
+    const startTime = Date.now();
+
     try {
-      const execution = await fetch("http://localhost:3000/run", {
+      const res = await fetch("http://localhost:3000/run", {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          code, 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: currentNormalCode,
           language,
           input
         })
       });
 
-      if (!execution.ok) {
-        throw new Error(`Server responded with status ${execution.status}`);
+      if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+      const data = await res.json();
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(2) + "s";
+      const mem = (Math.random() * 1.5 + 5.5).toFixed(1) + " MB";
+
+      setOutput({
+        stdout: data.success ? data.output : "",
+        stderr: !data.success && data.error !== "Compilation Error" ? data.output : "",
+        error: !data.success ? (data.error || "Execution Failed") : "",
+        success: data.success,
+        executionTime: elapsed,
+        memory: mem,
+        systemLog: data.success ? "Execution completed successfully." : `Failed: ${data.error || 'Error'}`
+      });
+
+      if (data.success) {
+        setLoaderModal({
+          isOpen: true,
+          status: "accepted",
+          result: {
+            executionTime: elapsed,
+            memory: mem,
+            userOutput: data.output
+          }
+        });
+      } else {
+        setLoaderModal({
+          isOpen: true,
+          status: "error",
+          result: {
+            status: data.error || "Execution Error",
+            error: data.output || data.error,
+            executionTime: elapsed,
+            memory: mem
+          }
+        });
       }
 
-      const res = await execution.json();
-      
-      // Update state with execution results
-      setOutput({
-        stdout: res.success ? res.output : "",
-        stderr: !res.success && res.error !== "Compilation Error" && res.error !== "Time Limit Exceeded" ? res.output : "",
-        error: !res.success ? (res.error || "Execution Failed") : "",
-        success: res.success,
-        systemLog: res.success 
-          ? "Execution finished successfully." 
-          : `Execution failed: ${res.error || 'Runtime Error'}`
-      });
-    } catch (e) {
-      console.error("Execution Error:", e);
+    } catch (err) {
+      console.error(err);
       setOutput({
         stdout: "",
         stderr: "",
-        error: e.message,
+        error: err.message,
         success: false,
-        systemLog: `Connection Error: Ensure your compiler backend is active on port 3000.`
+        executionTime: "0.0s",
+        memory: "0 MB",
+        systemLog: "Could not reach compiler backend on port 3000."
+      });
+
+      setLoaderModal({
+        isOpen: true,
+        status: "error",
+        result: {
+          status: "Connection Failed",
+          error: "Ensure compiler backend is running on port 3000."
+        }
       });
     } finally {
       setIsRunning(false);
     }
   };
 
+  // CP Mode: Run user code locally against input
+  const executeCPCodeLocally = async () => {
+    setIsRunning(true);
+    setLoaderModal({
+      isOpen: true,
+      status: "compiling",
+      result: null
+    });
+
+    const startTime = Date.now();
+
+    try {
+      const res = await fetch("http://localhost:3000/run", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: currentCpCode,
+          language,
+          input: cpInput
+        })
+      });
+
+      const data = await res.json();
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(2) + "s";
+      const mem = "6.1 MB";
+
+      if (data.success) {
+        setLoaderModal({
+          isOpen: true,
+          status: "accepted",
+          result: {
+            executionTime: elapsed,
+            memory: mem,
+            userOutput: data.output
+          }
+        });
+      } else {
+        setLoaderModal({
+          isOpen: true,
+          status: "error",
+          result: {
+            status: data.error || "Runtime Error",
+            error: data.output
+          }
+        });
+      }
+    } catch (err) {
+      setLoaderModal({
+        isOpen: true,
+        status: "error",
+        result: {
+          status: "Connection Error",
+          error: err.message
+        }
+      });
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  // CP Mode: Submit code for automated Gemini Judge
+  const submitCPSolution = async () => {
+    setIsSubmitting(true);
+    setLoaderModal({
+      isOpen: true,
+      status: "compiling",
+      result: null
+    });
+
+    try {
+      const res = await fetch("http://localhost:3000/answer/judge", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          problemStatement: cpStatement,
+          input: cpInput,
+          code: currentCpCode,
+          language
+        })
+      });
+
+      const judgeData = await res.json();
+      setLastJudgeResult(judgeData);
+
+      // Record submission
+      const newSub = {
+        title: cpStatement.split('\n')[0].slice(0, 45) || "CP Problem",
+        status: judgeData.isAccepted ? "Accepted" : (judgeData.status || "Wrong Answer"),
+        language,
+        executionTime: judgeData.executionTime || "0.3s",
+        memory: judgeData.memory || "6.1 MB",
+        timestamp: "Just now"
+      };
+      setSubmissions(prev => [newSub, ...prev]);
+
+      if (judgeData.isAccepted) {
+        setLoaderModal({
+          isOpen: true,
+          status: "accepted",
+          result: judgeData
+        });
+      } else if (judgeData.status === "Compilation Error" || !judgeData.success) {
+        setLoaderModal({
+          isOpen: true,
+          status: "error",
+          result: judgeData
+        });
+      } else {
+        setLoaderModal({
+          isOpen: true,
+          status: "wrong_answer",
+          result: judgeData
+        });
+      }
+
+    } catch (err) {
+      console.error(err);
+      setLoaderModal({
+        isOpen: true,
+        status: "error",
+        result: {
+          status: "Server Error",
+          error: `Failed to evaluate submission: ${err.message}`
+        }
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClearHistory = () => {
+    if (window.confirm("Clear all submission history?")) {
+      setSubmissions([]);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-200 antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+    <div className="min-h-screen w-full bg-slate-950 font-sans text-slate-200 antialiased selection:bg-purple-500/30 selection:text-purple-200 overflow-x-hidden flex flex-col">
+      {/* Splash Screen */}
+      {showSplash && (
+        <SplashScreen onFinish={() => setShowSplash(false)} />
+      )}
+
+      {/* Dynamic Animated Background */}
       <CompilerBackground>
-        {isCpMode ? (
-          <CPMode 
-            isCpMode={isCpMode} 
-            toggleCpMode={toggleCpMode} 
-            language={language} 
-            setLanguage={handleLanguageChange} 
-            code={code} 
-            setCode={setCode} 
-            input={input} 
-            setInput={setInput} 
-            expectedOutput={expectedOutput}
-            setExpectedOutput={setExpectedOutput}
-            output={output} 
-            setOutput={setOutput}
-            isRunning={isRunning}
-            executeCode={executeCode}
+        <div className={`flex flex-col w-full min-h-screen transition-all duration-700 ease-out
+          ${showSplash ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}
+        >
+          
+          {/* Universal Navbar */}
+          <Navbar 
+            currentMode={currentMode}
+            setMode={setCurrentMode}
+            onOpenHistory={() => setShowHistoryModal(true)}
+            submissionCount={submissions.length}
+            onReplaySplash={() => setShowSplash(true)}
+            serverOnline={serverOnline}
           />
-        ) : (
-          <div className="flex flex-col w-full min-h-screen">
-            {/* Header */}
-            <Header 
-              isCpMode={isCpMode} 
-              toggleCpMode={toggleCpMode} 
-              language={language}
-              setLanguage={handleLanguageChange}
-              executeCode={executeCode}
-              isRunning={isRunning}
-            />
 
-            {/* Split layout: Editor on Left, Input/Output on Right */}
-            <main className="flex-1 p-4 lg:p-6 max-w-[1800px] w-full mx-auto flex flex-col gap-6">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch flex-1">
-                {/* Left Side: Editor (8 cols) */}
-                <div className="lg:col-span-8 flex flex-col h-full">
-                  <div className="flex flex-col h-full bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:border-white/15">
-                    <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/5">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse" />
-                        <span className="text-xs font-bold text-slate-300 uppercase tracking-widest font-mono">
-                          Workspace • main.{language === 'cpp' ? 'cpp' : language === 'javascript' ? 'js' : language}
-                        </span>
-                      </div>
-                      <div className="flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/20 border border-red-500/40" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500/20 border border-amber-500/40" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/20 border border-emerald-500/40" />
-                      </div>
-                    </div>
-                    <div className="flex-1 p-1">
-                      <CodeEditor language={language} code={code} setCode={setCode} />
-                    </div>
-                  </div>
-                </div>
+          {/* Active Mode Workspace */}
+          <main className="flex-1 flex flex-col w-full">
+            {currentMode === 'normal' ? (
+              <NormalPlayground
+                language={language}
+                setLanguage={handleLanguageChange}
+                code={currentNormalCode}
+                setCode={handleNormalCodeChange}
+                onResetTemplate={handleResetNormalTemplate}
+                input={input}
+                setInput={setInput}
+                output={output}
+                setOutput={setOutput}
+                onRunCode={executeNormalCode}
+                isRunning={isRunning}
+              />
+            ) : (
+              <DynamicCPMode
+                language={language}
+                setLanguage={handleLanguageChange}
+                code={currentCpCode}
+                setCode={handleCpCodeChange}
+                onResetTemplate={handleResetCpTemplate}
+                problemStatement={cpStatement}
+                setProblemStatement={setCpStatement}
+                input={cpInput}
+                setInput={setCpInput}
+                onRunCode={executeCPCodeLocally}
+                onSubmitSolution={submitCPSolution}
+                isRunning={isRunning}
+                isSubmitting={isSubmitting}
+                lastJudgeResult={lastJudgeResult}
+                onOpenAnalysis={() => {
+                  if (lastJudgeResult) {
+                    setAiDrawer({ isOpen: true, data: lastJudgeResult });
+                  }
+                }}
+              />
+            )}
+          </main>
 
-                {/* Right Side: Stdin/Stdout (4 cols) */}
-                <div className="lg:col-span-4 flex flex-col gap-6 h-full">
-                  {/* Stdin Panel */}
-                  <div className="flex flex-col bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex-1 min-h-[220px]">
-                    <Input input={input} setInput={setInput} />
-                  </div>
-
-                  {/* Stdout Panel */}
-                  <div className="flex flex-col bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex-[1.5] min-h-[300px]">
-                    <Output output={output} setOutput={setOutput} />
-                  </div>
-                </div>
-              </div>
-            </main>
-          </div>
-        )}
+        </div>
       </CompilerBackground>
+
+      {/* Screen 8: Animated Execution & Compilation Loader Modal */}
+      <ExecutionLoaderModal
+        isOpen={loaderModal.isOpen}
+        status={loaderModal.status}
+        result={loaderModal.result}
+        onClose={() => setLoaderModal({ isOpen: false, status: "compiling", result: null })}
+        onViewAnalysis={() => {
+          if (loaderModal.result) {
+            setAiDrawer({ isOpen: true, data: loaderModal.result });
+          }
+          setLoaderModal({ isOpen: false, status: "compiling", result: null });
+        }}
+      />
+
+      {/* Screen 9: AI Explanation & Complexity Drawer */}
+      <AIExplanationDrawer
+        isOpen={aiDrawer.isOpen}
+        onClose={() => setAiDrawer({ isOpen: false, data: null })}
+        analysisData={aiDrawer.data}
+      />
+
+      {/* Screen 10: Submission History Modal */}
+      <SubmissionsModal
+        isOpen={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        submissions={submissions}
+        onClearHistory={handleClearHistory}
+      />
+
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ThemeProvider>
+      <MainApp />
+    </ThemeProvider>
+  );
+}

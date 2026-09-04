@@ -51,7 +51,9 @@ export default function CPMode({
   output,
   setOutput,
   isRunning,
-  executeCode
+  executeCode,
+  submitCode,
+  isSubmitting
 }) {
   const [problemText, setProblemText] = useState(DEFAULT_PROBLEM);
 
@@ -71,6 +73,8 @@ export default function CPMode({
         setLanguage={setLanguage}
         executeCode={executeCode}
         isRunning={isRunning}
+        submitCode={submitCode}
+        isSubmitting={isSubmitting}
       />
 
       {/* Main Grid Workspace */}

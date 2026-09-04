@@ -1,2 +1,120 @@
 @import "tailwindcss";
 
+@layer base {
+  :root, body[data-theme="dark"] {
+    --bg-primary: #030712;
+    --bg-surface: #080c18;
+    --bg-surface-elevated: #0f1629;
+    --bg-header: rgba(255, 255, 255, 0.03);
+    --bg-subtle: rgba(255, 255, 255, 0.04);
+    --bg-subtle-hover: rgba(255, 255, 255, 0.08);
+    --bg-input: #050814;
+    --bg-terminal: #040711;
+    --bg-tab-active: rgba(255, 255, 255, 0.1);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+    --border-input: rgba(255, 255, 255, 0.12);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-placeholder: #475569;
+    --card-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 25px rgba(99, 102, 241, 0.05);
+    --dot-color: rgba(255, 255, 255, 0.08);
+    --aurora-1: rgba(139, 92, 246, 0.35);
+    --aurora-2: rgba(6, 182, 212, 0.25);
+    --card-bg: rgba(8, 12, 24, 0.85);
+    --bar-bg: rgba(255, 255, 255, 0.04);
+  }
+
+  /* ================= WORLD-CLASS LIGHT MODE ================= */
+  body[data-theme="light"] {
+    --bg-primary: #f8fafc;                 /* Crisp slate-50 background */
+    --bg-surface: #ffffff;                 /* Pure crisp white card surface */
+    --bg-surface-elevated: #f1f5f9;        /* Elevated elements */
+    --bg-header: #f8fafc;                  /* Header action bars */
+    --bg-subtle: #f1f5f9;                  /* Subtle buttons & chip background */
+    --bg-subtle-hover: #e2e8f0;            /* Button hover */
+    --bg-input: #ffffff;                   /* White inputs */
+    --bg-terminal: #f8fafc;                /* Light clean terminal */
+    --bg-tab-active: #ffffff;              /* Active tab */
+    --border-color: #e2e8f0;               /* Clean slate border */
+    --border-subtle: #f1f5f9;
+    --border-input: #cbd5e1;               /* Clear visible input border */
+    --text-primary: #0f172a;               /* Deep slate-900 */
+    --text-secondary: #334155;             /* Readable slate-700 */
+    --text-muted: #64748b;                 /* Clear slate-500 */
+    --text-placeholder: #94a3b8;           /* Placeholder */
+    --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+    --dot-color: rgba(15, 23, 42, 0.06);   /* Crisp micro dots */
+    --aurora-1: rgba(99, 102, 241, 0.10);  /* Soft studio aura */
+    --aurora-2: rgba(6, 182, 212, 0.08);
+    --card-bg: #ffffff;
+    --bar-bg: #f8fafc;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.5);
+}
+
+/* Animations */
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float-card {
+  animation: floatCard 6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}

@@ -1,23 +1,22 @@
 import express from "express"
-import { codeQueue, queueEvents } from "../queue.js";
-const router = express.Router();
+import { executeCode } from "../executor.js";
+const runRouter = express.Router();
 
-router.get("/",(req,res)=>{
+runRouter.get("/",(req,res)=>{
     res.send("hello from run")
 })
-router.post("/",async (req,res)=>{
+runRouter.post("/",async (req,res)=>{
     const {code,language,input}=req.body;
     try {
-        const job = await codeQueue.add("executeCode", { code, language, input });
-        const response = await job.waitUntilFinished(queueEvents);
+        const response = await executeCode(code, language, input);
         console.log("Job execution completed:", response);
         res.send(response);
     } catch (err) {
-        console.error("Queue execution error:", err);
+        console.error("Execution error:", err);
         res.status(500).send({
             output: `Execution failed: ${err.message}`,
             error: err.message
         });
     }
 })
-export default router
+export default runRouter

@@ -11,7 +11,7 @@ import {
 /**
  * Header Component for NexusCode IDE
  */
-function Header({ isCpMode, toggleCpMode, language, setLanguage, executeCode, isRunning }) {
+function Header({ isCpMode, toggleCpMode, language, setLanguage, executeCode, isRunning, submitCode, isSubmitting }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -37,8 +37,8 @@ function Header({ isCpMode, toggleCpMode, language, setLanguage, executeCode, is
     <header className="flex flex-col sm:flex-row justify-between items-center w-full px-6 py-3 bg-slate-900/40 backdrop-blur-md border-b border-white/10 z-[100] transition-all gap-4">
       
       {/* Brand & Primary Actions */}
-      <div className="flex items-center justify-between sm:justify-start gap-6 w-full sm:w-auto">
-        <div className="flex items-center gap-2 group cursor-pointer">
+      <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
+        <div className="flex items-center gap-2 group cursor-pointer mr-2 select-none">
           <div className="bg-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20 font-mono">
             <Code2 size={20} className="text-white" />
           </div>
@@ -54,21 +54,45 @@ function Header({ isCpMode, toggleCpMode, language, setLanguage, executeCode, is
 
         {/* Run Button */}
         <button 
-          disabled={isRunning}
+          disabled={isRunning || isSubmitting}
           onClick={executeCode}
-          className={`flex items-center justify-center gap-2 text-white px-6 py-2 rounded-xl transition-all font-semibold text-sm tracking-wide cursor-pointer font-sans
-            ${isRunning 
-              ? 'bg-slate-800 border border-slate-700 cursor-not-allowed opacity-80' 
-              : 'bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 hover:border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.25)] hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] active:scale-95'
+          className={`flex items-center justify-center gap-2 text-white px-5 py-2 rounded-xl transition-all font-semibold text-xs sm:text-sm tracking-wide cursor-pointer font-sans duration-200 active:scale-95
+            ${isCpMode 
+              ? 'bg-slate-800/80 border border-slate-700 text-slate-350 hover:border-slate-500 hover:text-slate-100 hover:bg-slate-850/80' 
+              : isRunning 
+                ? 'bg-slate-850 border border-slate-800 text-slate-500 cursor-not-allowed opacity-80'
+                : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_15px_rgba(79,70,229,0.25)] hover:shadow-[0_0_20px_rgba(79,70,229,0.45)] border border-indigo-500/50'
             }`}
         >
           {isRunning ? (
-            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white" />
+            <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white/30 border-t-white" />
           ) : (
-            <Play size={14} fill="currentColor" />
+            <Play size={13} fill="currentColor" />
           )}
-          <span>{isRunning ? 'Running...' : 'Run'}</span>
+          <span>{isRunning ? 'Running...' : 'Run Code'}</span>
         </button>
+
+        {/* Submit Button (Only in CP Mode) */}
+        {isCpMode && (
+          <button 
+            disabled={isRunning || isSubmitting}
+            onClick={submitCode}
+            className={`flex items-center justify-center gap-2 text-white px-6 py-2 rounded-xl transition-all font-bold text-xs sm:text-sm tracking-wide cursor-pointer font-sans duration-200 active:scale-95
+              ${isSubmitting 
+                ? 'bg-slate-850 border border-slate-800 text-slate-500 cursor-not-allowed opacity-80'
+                : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.25)] hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] border border-emerald-500/50'
+              }`}
+          >
+            {isSubmitting ? (
+              <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white/30 border-t-white" />
+            ) : (
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+            <span>{isSubmitting ? 'Submitting...' : 'Submit'}</span>
+          </button>
+        )}
       </div>
 
       {/* Configuration & Layout Controls */}

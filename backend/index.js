@@ -6,6 +6,7 @@ import runRouter from "./routes/run.js"
 import answerRouter from "./routes/answer.js"
 import cors from 'cors'
 import { socketInit } from "./sockets/index.js"
+import "./workers/index.js";
 
 
 const app = express()

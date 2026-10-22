@@ -206,13 +206,17 @@ function MainApp() {
       const mem = (Math.random() * 1.5 + 5.5).toFixed(1) + " MB";
 
       setOutput({
-        stdout: data.success ? data.output : "",
-        stderr: !data.success && data.error !== "Compilation Error" ? data.output : "",
-        error: !data.success ? (data.error || "Execution Failed") : "",
+        stdout: data.success ? (data.stdout || data.output || "") : "",
+        stderr: !data.success && data.status !== "Compilation Error" && data.error !== "Compilation Error" ? (data.stderr || data.output || "") : "",
+        error: !data.success && (data.status === "Compilation Error" || data.error === "Compilation Error")
+          ? (data.output || data.stderr || "Compilation Error")
+          : (!data.success ? (data.error || data.status || "Execution Failed") : ""),
         success: data.success,
-        executionTime: elapsed,
-        memory: mem,
-        systemLog: data.success ? "Execution completed successfully." : `Failed: ${data.error || 'Error'}`
+        executionTime: data.executionTime || elapsed,
+        memory: data.memory || mem,
+        systemLog: data.success
+          ? `Execution completed successfully${data.sandbox === 'docker' ? ' (Docker Sandbox)' : ''}.`
+          : `Failed: ${data.status || data.error || 'Error'}`
       });
 
       if (data.success) {
@@ -220,8 +224,8 @@ function MainApp() {
           isOpen: true,
           status: "accepted",
           result: {
-            executionTime: elapsed,
-            memory: mem,
+            executionTime: data.executionTime || elapsed,
+            memory: data.memory || mem,
             userOutput: data.output
           }
         });
@@ -230,10 +234,10 @@ function MainApp() {
           isOpen: true,
           status: "error",
           result: {
-            status: data.error || "Execution Error",
+            status: data.status || data.error || "Execution Error",
             error: data.output || data.error,
-            executionTime: elapsed,
-            memory: mem
+            executionTime: data.executionTime || elapsed,
+            memory: data.memory || mem
           }
         });
       }
@@ -286,8 +290,8 @@ function MainApp() {
       });
 
       const data = await res.json();
-      const elapsed = ((Date.now() - startTime) / 1000).toFixed(2) + "s";
-      const mem = "6.1 MB";
+      const elapsed = data.executionTime || (((Date.now() - startTime) / 1000).toFixed(2) + "s");
+      const mem = data.memory || "6.1 MB";
 
       if (data.success) {
         setLoaderModal({
@@ -304,8 +308,8 @@ function MainApp() {
           isOpen: true,
           status: "error",
           result: {
-            status: data.error || "Runtime Error",
-            error: data.output
+            status: data.status || data.error || "Runtime Error",
+            error: data.output || data.error
           }
         });
       }

@@ -1,0 +1,44 @@
+# ==============================================================================
+# CompileX Multi-Language Sandbox Image
+# Secure, isolated container environment for compiling & executing user code
+# Supports: C (GCC), C++ (G++), Python 3, Node.js (JavaScript), Java (OpenJDK)
+# ==============================================================================
+
+FROM alpine:3.19
+
+# Set non-interactive environment
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install compilers, interpreters, execution utilities, and security dependencies
+RUN apk update && apk add --no-cache \
+    gcc \
+    g++ \
+    musl-dev \
+    python3 \
+    nodejs \
+    openjdk17 \
+    bash \
+    coreutils \
+    findutils \
+    grep \
+    sed \
+    util-linux
+
+# Configure Java environment paths
+ENV JAVA_HOME="/usr/lib/jvm/java-17-openjdk"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+# Create unprivileged sandbox user and group (UID: 1000, GID: 1000)
+RUN addgroup -g 1000 sandbox && \
+    adduser -D -u 1000 -G sandbox -s /bin/bash sandbox
+
+# Setup sandbox workspace directory with permissive read/write permissions for mounts
+WORKDIR /sandbox
+RUN chown -R sandbox:sandbox /sandbox && chmod 777 /sandbox
+
+# Drop capabilities and run as unprivileged user
+USER sandbox
+
+# Default shell
+CMD ["/bin/bash"]

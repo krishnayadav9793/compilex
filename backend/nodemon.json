@@ -1,0 +1,19 @@
+{
+  "watch": [
+    "index.js",
+    "routes/",
+    "queues/",
+    "workers/",
+    "sockets/",
+    "controller/",
+    "radis.js",
+    "executor.js"
+  ],
+  "ignore": [
+    "temp_submissions/**",
+    "temp_submissions/*",
+    "temp_submissions",
+    "node_modules/**"
+  ],
+  "ext": "js,json"
+}

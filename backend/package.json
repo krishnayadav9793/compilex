@@ -16,7 +16,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon --ignore temp_submissions/ index.js",
+    "dev": "nodemon index.js",
+    "build:sandbox": "docker build -t compilex-sandbox:latest -f Dockerfile.sandbox .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

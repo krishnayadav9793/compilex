@@ -38,20 +38,20 @@ answerRouter.post("/judge", async (req, res) => {
   const startTime = Date.now();
 
   try {
-    // Step 1: Run the user's code locally
+    // Step 1: Run the user's code in sandbox
     const executionResult = await executeCode(code, language, input);
-    const executionElapsed = ((Date.now() - startTime) / 1000).toFixed(2) + "s";
+    const executionElapsed = executionResult.executionTime || (((Date.now() - startTime) / 1000).toFixed(2) + "s");
 
     // If compilation error or runtime error occurred in user's code
     if (!executionResult.success) {
       return res.json({
         success: false,
         isAccepted: false,
-        status: executionResult.error || "Runtime Error",
+        status: executionResult.status || executionResult.error || "Runtime Error",
         userOutput: executionResult.output,
-        error: executionResult.error,
+        error: executionResult.output || executionResult.error,
         executionTime: executionElapsed,
-        memory: "5.8 MB"
+        memory: executionResult.memory || "5.8 MB"
       });
     }
 
@@ -91,7 +91,7 @@ answerRouter.post("/judge", async (req, res) => {
       isOptimal: geminiJudge.isOptimal,
       feedback: geminiJudge.feedback,
       executionTime: executionElapsed,
-      memory: (Math.random() * 1.8 + 5.6).toFixed(1) + " MB"
+      memory: executionResult.memory || ((Math.random() * 1.8 + 5.6).toFixed(1) + " MB")
     });
 
   } catch (error) {

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import CodeEditor from '../../../components/CodeEditor.jsx';
 import LanguageSelector from '../Common/LanguageSelector.jsx';
+import { API_BASE_URL } from '../../config';
 
 export default function NormalPlayground({
   language,
@@ -63,7 +64,7 @@ export default function NormalPlayground({
 
     setAiResponseModal({ isOpen: true, text: "", loading: true });
     try {
-      const response = await fetch("http://localhost:3000/answer/ai-assist", {
+      const response = await fetch(`${API_BASE_URL}/answer/ai-assist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -9,6 +9,7 @@ import ExecutionLoaderModal from './components/Modals/ExecutionLoaderModal';
 import AIExplanationDrawer from './components/Modals/AIExplanationDrawer';
 import SubmissionsModal from './components/Modals/SubmissionsModal';
 import { BOILERPLATES, CP_TEMPLATES, PRESETS } from './utils/cpPresets';
+import { API_BASE_URL } from './config';
 
 function MainApp() {
   // Splash Screen state
@@ -105,7 +106,7 @@ function MainApp() {
   useEffect(() => {
     const checkServer = async () => {
       try {
-        const res = await fetch("http://localhost:3000/run");
+        const res = await fetch(`${API_BASE_URL}/run`);
         if (res.ok) setServerOnline(true);
       } catch {
         setServerOnline(false);
@@ -190,7 +191,7 @@ function MainApp() {
     const startTime = Date.now();
 
     try {
-      const res = await fetch("http://localhost:3000/run", {
+      const res = await fetch(`${API_BASE_URL}/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -279,7 +280,7 @@ function MainApp() {
     const startTime = Date.now();
 
     try {
-      const res = await fetch("http://localhost:3000/run", {
+      const res = await fetch(`${API_BASE_URL}/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -337,7 +338,7 @@ function MainApp() {
     });
 
     try {
-      const res = await fetch("http://localhost:3000/answer/judge", {
+      const res = await fetch(`${API_BASE_URL}/answer/judge`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

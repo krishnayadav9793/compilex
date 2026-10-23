@@ -11,12 +11,12 @@ import "./workers/index.js";
 
 const app = express()
 const server = createServer(app)
-const port = 3000
-const io = new Server(server,{
+const port = process.env.PORT || 3000;
+const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173"
+        origin: "*"
     }
-}) 
+}); 
 
 
 app.use(cors())

@@ -1,26 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import CodeSphereLogo from '../Common/CodeSphereLogo';
 import { ArrowRight } from 'lucide-react';
 
 export default function SplashScreen({ onFinish }) {
   const [isExiting, setIsExiting] = useState(false);
 
-  useEffect(() => {
-    // 1.8 seconds crisp duration then smooth transition into the app
-    const timer = setTimeout(() => {
-      triggerExit();
-    }, 1800);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const triggerExit = () => {
+  const triggerExit = useCallback(() => {
     if (isExiting) return;
     setIsExiting(true);
     setTimeout(() => {
       if (onFinish) onFinish();
     }, 600);
-  };
+  }, [isExiting, onFinish]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      triggerExit();
+    }, 1800);
+
+    return () => clearTimeout(timer);
+  }, [triggerExit]);
 
   return (
     <div 

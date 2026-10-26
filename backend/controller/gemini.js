@@ -101,7 +101,7 @@ export async function askGeminiAssist(userPrompt, code = "", language = "") {
     throw new Error("Gemini API key is not configured on the server.");
   }
 
-  const prompt = `You are CodeSphere AI, an expert algorithm & software engineering assistant.
+  const prompt = `You are compileX AI, an expert algorithm & software engineering assistant.
 Help the user with their coding query.
 
 User Query: ${userPrompt}

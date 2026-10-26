@@ -1,97 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Check, Sparkles, Cpu } from 'lucide-react';
-
-export const SUPPORTED_LANGUAGES = [
-  {
-    id: 'cpp',
-    name: 'C++',
-    version: 'C++17',
-    tag: 'GCC 11',
-    description: 'High performance & STL algorithms',
-    accentColor: '#00599C',
-    glowColor: 'rgba(0, 89, 156, 0.4)',
-    badgeBg: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
-    icon: (
-      <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none">
-        <path d="M16 3L29 10.5V21.5L16 29L3 21.5V10.5L16 3Z" fill="url(#cpp-hex)" stroke="#38bdf8" strokeWidth="1.5"/>
-        <text x="16" y="20.5" textAnchor="middle" fill="#ffffff" fontSize="10.5" fontWeight="900" fontFamily="system-ui, sans-serif">C++</text>
-        <defs>
-          <linearGradient id="cpp-hex" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#034b8c" />
-            <stop offset="1" stopColor="#0284c7" />
-          </linearGradient>
-        </defs>
-      </svg>
-    )
-  },
-  {
-    id: 'python',
-    name: 'Python',
-    version: 'v3.10',
-    tag: 'CPython',
-    description: 'Clean syntax & extensive standard library',
-    accentColor: '#3776AB',
-    glowColor: 'rgba(55, 118, 171, 0.4)',
-    badgeBg: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-    icon: (
-      <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none">
-        <path d="M15.8 3C9.3 3 9.7 5.8 9.7 5.8L9.7 8.7H16.1V9.7H7.3C7.3 9.7 3 9.2 3 15.8C3 22.4 6.7 22.1 6.7 22.1L8.8 22.1L8.8 19.1C8.8 19.1 8.7 15.5 12.3 15.5H18.7C18.7 15.5 22.1 15.6 22.1 12.3L22.1 5.8C22.1 5.8 22.5 3 15.8 3ZM12.5 5.5C13.2 5.5 13.8 6.1 13.8 6.8C13.8 7.5 13.2 8.1 12.5 8.1C11.8 8.1 11.2 7.5 11.2 6.8C11.2 6.1 11.8 5.5 12.5 5.5Z" fill="#387eb8"/>
-        <path d="M16.2 29C22.7 29 22.3 26.2 22.3 26.2L22.3 23.3H15.9V22.3H24.7C24.7 22.3 29 22.8 29 16.2C29 9.6 25.3 9.9 25.3 9.9L23.2 9.9L23.2 12.9C23.2 12.9 23.3 16.5 19.7 16.5H13.3C13.3 16.5 9.9 16.4 9.9 19.7L9.9 26.2C9.9 26.2 9.5 29 16.2 29ZM19.5 26.5C18.8 26.5 18.2 25.9 18.2 25.2C18.2 24.5 18.8 23.9 19.5 23.9C20.2 23.9 20.8 24.5 20.8 25.2C20.8 25.9 20.2 26.5 19.5 26.5Z" fill="#ffd43b"/>
-      </svg>
-    )
-  },
-  {
-    id: 'javascript',
-    name: 'JavaScript',
-    version: 'Node 20',
-    tag: 'V8 Engine',
-    description: 'Modern asynchronous runtime with ES2024',
-    accentColor: '#F7DF1E',
-    glowColor: 'rgba(247, 223, 30, 0.4)',
-    badgeBg: 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30',
-    icon: (
-      <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="7" fill="#F7DF1E" />
-        <path d="M18.8 23.5C19.7 24.9 21.2 25.8 23.1 25.8C25 25.8 26.3 24.8 26.3 23.3C26.3 21.8 25.1 21.2 23.2 20.4L22.1 19.9C19.1 18.6 17.2 17 17.2 13.5C17.2 10.1 20 7.6 24 7.6C26.7 7.6 28.7 8.7 29.9 10.9L26.7 12.9C26 11.7 24.9 11 23.9 11C22.8 11 21.8 11.7 21.8 12.8C21.8 14 22.8 14.5 24.6 15.3L25.7 15.8C29.2 17.3 31 18.9 31 22.5C31 26.4 27.8 28.9 23.1 28.9C19.2 28.9 16.7 26.8 15.4 24.3L18.8 23.5ZM9.3 23.8C10 24.9 10.8 25.7 12.1 25.7C13.4 25.7 14.2 25 14.2 23.2V8.2H18.7V23.2C18.7 27.2 16.2 28.9 12.1 28.9C8.4 28.9 6.2 26.8 5.2 24.6L8.8 22.6C9 23 9.1 23.5 9.3 23.8Z" fill="#000000"/>
-      </svg>
-    )
-  },
-  {
-    id: 'java',
-    name: 'Java',
-    version: 'JDK 17',
-    tag: 'OpenJDK',
-    description: 'Robust enterprise OOP & JVM bytecode',
-    accentColor: '#F89820',
-    glowColor: 'rgba(248, 152, 32, 0.4)',
-    badgeBg: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
-    icon: (
-      <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="7" fill="#181e2b" stroke="#f89820" strokeWidth="1.2" />
-        <path d="M12 21.5C12 21.5 14 22.5 17 22.5C20 22.5 22 21.5 22 21.5C22 21.5 21 23.5 17 23.5C13 23.5 12 21.5 12 21.5Z" fill="#f89820"/>
-        <path d="M11 18.5C11 18.5 13.5 20 17 20C20.5 20 23 18.5 23 18.5C23 18.5 21.5 21 17 21C12.5 21 11 18.5 11 18.5Z" fill="#5382A1"/>
-        <path d="M17 6.5C15 9.5 14 11.5 18 13.5C16 13.5 14 12 16 9.5C17 8 16.5 7 17 6.5Z" fill="#ed8b00"/>
-        <path d="M19 7.5C17.5 10.5 16.5 12.5 20.5 14.5C18.5 14.5 16.5 13 18.5 10.5C19.5 9 18.5 8 19 7.5Z" fill="#ea580c"/>
-      </svg>
-    )
-  },
-  {
-    id: 'c',
-    name: 'C',
-    version: 'C11',
-    tag: 'GCC',
-    description: 'Direct memory management & micro overhead',
-    accentColor: '#659AD2',
-    glowColor: 'rgba(101, 154, 210, 0.4)',
-    badgeBg: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
-    icon: (
-      <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="7" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.2" />
-        <path d="M22 10.5C20.5 9 18.5 8.2 16 8.2C11.5 8.2 8 11.6 8 16C8 20.4 11.5 23.8 16 23.8C18.5 23.8 20.5 23 22 21.5" stroke="#38bdf8" strokeWidth="3" strokeLinecap="round"/>
-      </svg>
-    )
-  }
-];
+import { ChevronDown, Check, Sparkles, Cpu, ShieldCheck } from 'lucide-react';
+import { SUPPORTED_LANGUAGES } from '../../utils/supportedLanguages';
 
 export default function LanguageSelector({
   language,
@@ -104,7 +13,7 @@ export default function LanguageSelector({
 
   const current = SUPPORTED_LANGUAGES.find(l => l.id === language) || SUPPORTED_LANGUAGES[0];
 
-  // Close dropdown on click outside
+  // Close dropdown on click outside or escape key
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
@@ -134,26 +43,28 @@ export default function LanguageSelector({
   };
 
   return (
-    <div className="relative inline-block text-left" ref={containerRef}>
-      {/* Trigger Button */}
+    <div className="relative inline-flex items-center text-left shrink-0 overflow-visible" ref={containerRef}>
+      
+      {/* ================= ULTRA-CLASSY GLASSY TRIGGER BUTTON ================= */}
       <button
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className={`group relative flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-200 cursor-pointer select-none
-          ${isOpen 
-            ? 'bg-[#0f172a] border-indigo-500/60 shadow-[0_0_25px_rgba(99,102,241,0.3)] ring-2 ring-indigo-500/30' 
-            : 'bg-gradient-to-b from-white/[0.09] to-white/[0.03] hover:from-white/[0.14] hover:to-white/[0.06] border-white/10 hover:border-white/20 shadow-sm active:scale-[0.98]'
-          }
+        className={`group relative flex items-center gap-2 h-8.5 px-3 rounded-full transition-all duration-200 cursor-pointer select-none glassy-trigger
           ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+        style={isOpen ? {
+          boxShadow: '0 0 0 2px rgba(99, 102, 241, 0.4), 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
+          borderColor: 'rgba(99, 102, 241, 0.6)'
+        } : {}}
       >
-        {/* Language Icon Badge */}
+        {/* Language Icon with Glowing Micro-Badge */}
         <div 
-          className="relative flex items-center justify-center shrink-0 w-6 h-6 rounded-lg bg-black/40 border border-white/10 p-0.5 shadow-inner transition-transform group-hover:scale-105"
+          className="relative flex items-center justify-center shrink-0 w-5.5 h-5.5 rounded-lg p-0.5 transition-transform duration-200 group-hover:scale-105"
           style={{
-            boxShadow: isOpen ? `0 0 12px ${current.glowColor}` : 'none'
+            background: 'rgba(255, 255, 255, 0.04)',
+            boxShadow: `0 0 10px ${current.glowColor || 'rgba(255, 255, 255, 0.15)'}`
           }}
         >
           {current.icon}
@@ -168,10 +79,10 @@ export default function LanguageSelector({
             {current.name}
           </span>
           <span 
-            className="text-[10px] font-mono px-1.5 py-0.2 rounded-md border transition-colors"
+            className="hidden sm:inline-block text-[10px] font-mono px-1.5 py-0.2 rounded-md border transition-colors opacity-75"
             style={{ 
-              backgroundColor: 'var(--bar-bg)', 
-              borderColor: 'var(--border-color)',
+              backgroundColor: 'var(--bg-subtle)', 
+              borderColor: 'var(--border-subtle)',
               color: 'var(--text-secondary)'
             }}
           >
@@ -179,41 +90,54 @@ export default function LanguageSelector({
           </span>
         </div>
 
-        {/* Dynamic Chevron */}
+        {/* Dynamic Chevron with Spring Rotate */}
         <ChevronDown 
           size={13} 
-          className={`text-slate-400 group-hover:text-slate-200 transition-transform duration-200 ease-out ml-0.5
-            ${isOpen ? 'rotate-180 text-indigo-400' : ''}`} 
+          className={`transition-transform duration-300 ease-out ml-0.5 opacity-60 group-hover:opacity-100
+            ${isOpen ? 'rotate-180 opacity-100' : ''}`}
+          style={{ color: isOpen ? '#38bdf8' : 'var(--text-secondary)' }}
         />
       </button>
 
-      {/* Classic Glassmorphic Dropdown Menu */}
+      {/* ================= MODERN GLASSY FLOATING DROPDOWN ================= */}
       {isOpen && (
         <div
           role="listbox"
           aria-label="Supported programming languages"
-          className={`absolute top-full mt-2.5 z-[100] w-72 sm:w-80 rounded-2xl bg-[#060a14]/95 backdrop-blur-2xl border border-white/[0.12] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(99,102,241,0.18)] p-2 text-left animate-in fade-in zoom-in-95 duration-150
-            ${align === 'right' ? 'right-0' : 'left-0'}`}
+          className="absolute z-[999] w-80 sm:w-88 max-w-[calc(100vw-24px)] rounded-2xl border p-2.5 text-left shadow-2xl animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-150 glassy-dropdown pointer-events-auto"
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 8px)',
+            ...(align === 'right' ? { right: 0 } : { left: 0 }),
+            zIndex: 999
+          }}
         >
-          {/* Top Ambient Glow Horizon */}
-          <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
-
-          {/* Menu Header */}
-          <div className="px-3 py-2 flex items-center justify-between border-b border-white/[0.06] mb-1 select-none">
+          {/* Frosted Header */}
+          <div 
+            className="px-3 py-2 flex items-center justify-between border-b mb-2 select-none"
+            style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}
+          >
             <div className="flex items-center gap-1.5">
-              <Sparkles size={12} className="text-indigo-400" />
-              <span className="text-[10px] font-mono tracking-wider text-slate-400 uppercase font-semibold">
-                Language Environment
+              <Sparkles size={13} className="text-cyan-400 animate-pulse" />
+              <span className="text-[10px] font-mono tracking-wider uppercase font-bold" style={{ color: 'var(--text-muted)' }}>
+                Compiler Engine
               </span>
             </div>
-            <span className="text-[9px] font-mono text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-1">
+            <span 
+              className="text-[9px] font-mono px-2 py-0.5 rounded-full border flex items-center gap-1 font-semibold"
+              style={{
+                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                borderColor: 'rgba(16, 185, 129, 0.3)',
+                color: '#34d399'
+              }}
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              5 Available
+              5 Active Engines
             </span>
           </div>
 
           {/* Language Options List */}
-          <div className="space-y-1">
+          <div className="space-y-1.5 max-h-[62vh] overflow-y-auto pr-0.5">
             {SUPPORTED_LANGUAGES.map((lang) => {
               const isSelected = lang.id === language;
               return (
@@ -223,60 +147,90 @@ export default function LanguageSelector({
                   aria-selected={isSelected}
                   type="button"
                   onClick={() => handleSelect(lang.id)}
-                  className={`w-full flex items-center justify-between p-2 rounded-xl transition-all duration-150 cursor-pointer group text-left
+                  className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all duration-200 cursor-pointer group text-left border relative overflow-hidden
                     ${isSelected 
-                      ? 'bg-gradient-to-r from-indigo-600/25 via-purple-600/20 to-indigo-600/10 border border-indigo-500/40 text-white shadow-[0_0_15px_rgba(99,102,241,0.2)]' 
-                      : 'hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] text-slate-300 hover:text-white'
+                      ? 'shadow-md' 
+                      : 'hover:bg-white/5 border-transparent'
                     }`}
+                  style={isSelected ? {
+                    background: 'linear-gradient(90deg, rgba(99, 102, 241, 0.18) 0%, rgba(168, 85, 247, 0.08) 100%)',
+                    borderColor: 'rgba(99, 102, 241, 0.45)',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12)'
+                  } : {}}
                 >
-                  {/* Left: Icon + Name + Description */}
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  {/* Left Accent Bar on Selected */}
+                  {isSelected && (
                     <div 
-                      className={`relative flex items-center justify-center shrink-0 w-8 h-8 rounded-lg bg-black/50 border p-1 transition-all duration-200
-                        ${isSelected 
-                          ? 'border-indigo-400/50 shadow-[0_0_10px_rgba(99,102,241,0.3)] scale-105' 
-                          : 'border-white/10 group-hover:border-white/20 group-hover:scale-105'
-                        }`}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-gradient-to-b from-cyan-400 to-indigo-500 shadow-[0_0_8px_rgba(56,189,248,0.8)]"
+                    />
+                  )}
+
+                  {/* Left: Glowing Icon + Title + Version + Description */}
+                  <div className="flex items-center gap-3 min-w-0 pl-1">
+                    <div 
+                      className={`relative flex items-center justify-center shrink-0 w-9 h-9 rounded-xl p-1.5 transition-all duration-200 border
+                        ${isSelected ? 'scale-105 border-indigo-400/50' : 'border-white/10 group-hover:scale-105 group-hover:border-white/20'}`}
                       style={{
-                        boxShadow: isSelected ? `0 0 14px ${lang.glowColor}` : undefined
+                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                        boxShadow: isSelected ? `0 0 14px ${lang.glowColor || 'rgba(99, 102, 241, 0.4)'}` : undefined
                       }}
                     >
                       {lang.icon}
                     </div>
 
                     <div className="flex flex-col min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-semibold text-slate-100 group-hover:text-white truncate">
+                      <div className="flex items-center gap-2">
+                        <span 
+                          className="text-xs font-bold tracking-tight transition-colors"
+                          style={{ color: 'var(--text-primary)' }}
+                        >
                           {lang.name}
                         </span>
-                        <span className="text-[10px] font-mono text-slate-400">
+                        <span 
+                          className="text-[10px] font-mono px-1.5 py-0.2 rounded border font-medium opacity-80"
+                          style={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            borderColor: 'rgba(255, 255, 255, 0.08)',
+                            color: 'var(--text-secondary)'
+                          }}
+                        >
                           {lang.version}
                         </span>
                       </div>
-                      <span className="text-[11px] text-slate-400 group-hover:text-slate-300 truncate">
+                      <span className="text-[11px] truncate opacity-70 mt-0.5" style={{ color: 'var(--text-secondary)' }}>
                         {lang.description}
                       </span>
                     </div>
                   </div>
 
-                  {/* Right: Tag & Selection Indicator */}
-                  <div className="flex items-center gap-2 shrink-0 ml-2">
+                  {/* Right: Compiler Engine Tag & Active State Indicator */}
+                  <div className="flex items-center gap-2.5 shrink-0 ml-2">
                     <span 
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded-md border transition-colors
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold transition-colors
                         ${isSelected 
                           ? lang.badgeBg 
-                          : 'bg-white/[0.04] text-slate-400 border-white/[0.06] group-hover:border-white/15 group-hover:text-slate-200'
+                          : 'border-white/10 opacity-75'
                         }`}
+                      style={isSelected ? {} : {
+                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                        color: 'var(--text-secondary)'
+                      }}
                     >
                       {lang.tag}
                     </span>
 
                     {isSelected ? (
-                      <div className="w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_8px_rgba(16,185,129,0.4)]">
-                        <Check size={12} className="text-emerald-400 stroke-[3]" />
+                      <div 
+                        className="w-5 h-5 rounded-full border flex items-center justify-center shadow-xs"
+                        style={{
+                          backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                          borderColor: 'rgba(56, 189, 248, 0.6)'
+                        }}
+                      >
+                        <Check size={11} className="stroke-[3] text-cyan-400" />
                       </div>
                     ) : (
-                      <div className="w-5 h-5 rounded-full border border-white/5 group-hover:border-white/20 transition-colors" />
+                      <div className="w-5 h-5 rounded-full border border-white/15 group-hover:border-white/35 transition-colors" />
                     )}
                   </div>
                 </button>
@@ -284,13 +238,19 @@ export default function LanguageSelector({
             })}
           </div>
 
-          {/* Menu Footer */}
-          <div className="mt-1.5 pt-2 border-t border-white/[0.06] px-2.5 pb-1 flex items-center justify-between text-[10px] font-mono text-slate-400 select-none">
-            <div className="flex items-center gap-1">
-              <Cpu size={11} className="text-indigo-400" />
-              <span>Direct Subprocess Compiler</span>
+          {/* Frosted Modern Footer */}
+          <div 
+            className="mt-2 pt-2 border-t px-2.5 pb-0.5 flex items-center justify-between text-[10px] font-mono select-none"
+            style={{ 
+              borderColor: 'rgba(255, 255, 255, 0.08)',
+              color: 'var(--text-muted)'
+            }}
+          >
+            <div className="flex items-center gap-1.5 opacity-80">
+              <ShieldCheck size={12} className="text-emerald-400" />
+              <span>Isolated Sandbox Runtime</span>
             </div>
-            <span className="text-slate-400">ESC to close</span>
+            <span className="opacity-60 text-[9px]">ESC to dismiss</span>
           </div>
         </div>
       )}

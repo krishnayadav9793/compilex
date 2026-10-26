@@ -1,120 +1,359 @@
 @import "tailwindcss";
 
 @layer base {
-  :root, body[data-theme="dark"] {
-    --bg-primary: #030712;
-    --bg-surface: #080c18;
-    --bg-surface-elevated: #0f1629;
-    --bg-header: rgba(255, 255, 255, 0.03);
-    --bg-subtle: rgba(255, 255, 255, 0.04);
-    --bg-subtle-hover: rgba(255, 255, 255, 0.08);
-    --bg-input: #050814;
-    --bg-terminal: #040711;
-    --bg-tab-active: rgba(255, 255, 255, 0.1);
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-subtle: rgba(255, 255, 255, 0.05);
-    --border-input: rgba(255, 255, 255, 0.12);
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --text-placeholder: #475569;
-    --card-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 25px rgba(99, 102, 241, 0.05);
+  /* ================= SHINY DARK BLACK (OBSIDIAN OLED) & SAGE DUAL THEME ================= */
+
+  /* Shiny Dark Black Mode: True Pitch OLED Black with Glossy Specular Sheen */
+  :root, body[data-theme="dark"], html[data-theme="dark"] {
+    /* Color Palette - True Pitch Deep Black */
+    --bg-primary: #000000;                     /* True Pitch OLED Black */
+    --bg-navbar: rgba(5, 5, 8, 0.85);          /* Translucent Glossy Navbar */
+    --bg-secondary: #050508;                   /* Deep Obsidian Secondary Canvas */
+    --bg-tertiary: #0a0a10;                    /* Elevated Obsidian Surface */
+    --bg-hover: rgba(255, 255, 255, 0.10);     /* Glossy Hover Fill */
+    --bg-elevated: #0d0d15;                    /* Floating Modals & Menus */
+    --bg-active-nav: rgba(255, 255, 255, 0.15);/* Active Pill Navigation */
+    --bg-surface: #050508;
+    --bg-surface-elevated: #0c0c14;
+    --bg-terminal: #000000;
+    --bg-input: #040407;
+    --bg-card: rgba(8, 8, 13, 0.86);
+    --bg-header: rgba(5, 5, 8, 0.88);
+    --bar-bg: rgba(6, 6, 10, 0.92);
+    --bg-subtle: rgba(255, 255, 255, 0.06);
+    --bg-subtle-hover: rgba(255, 255, 255, 0.12);
+    --bg-tab-active: rgba(255, 255, 255, 0.12);
+    
+    /* Shiny Glass & Hairline Specular Borders */
+    --border-color: rgba(255, 255, 255, 0.12);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.32);
+    --border-active: #ffffff;
+    --border-glow: rgba(99, 102, 241, 0.35);   /* Radiant Shiny Border Glow */
+    --border-input: rgba(255, 255, 255, 0.16);
+    --border-shiny: rgba(255, 255, 255, 0.35); /* High-Luster Edge Highlight */
+    
+    /* High-Fidelity Typography & Luster */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.80);
+    --text-muted: rgba(255, 255, 255, 0.48);
+    --text-placeholder: rgba(255, 255, 255, 0.30);
+    
+    /* Shiny Accents & Iridescent Highlights */
+    --accent-primary: #ffffff;
+    --accent-secondary: rgba(255, 255, 255, 0.75);
+    --accent-soft: rgba(255, 255, 255, 0.90);
+    --accent-deep: rgba(255, 255, 255, 0.22);
+    --accent-subtle: rgba(255, 255, 255, 0.12);
+    --accent-cyan: #38bdf8;
+    --accent-indigo: #818cf8;
+    --accent-violet: #c084fc;
+    --accent-gold: #fbbf24;
+    
+    /* Deep Glass Shadows & Reflective Specular Horizon */
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.85);
+    --card-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.98), 0 0 25px rgba(255, 255, 255, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.14);
     --dot-color: rgba(255, 255, 255, 0.08);
-    --aurora-1: rgba(139, 92, 246, 0.35);
-    --aurora-2: rgba(6, 182, 212, 0.25);
-    --card-bg: rgba(8, 12, 24, 0.85);
-    --bar-bg: rgba(255, 255, 255, 0.04);
+    --aurora-1: rgba(99, 102, 241, 0.16);
+    --aurora-2: rgba(168, 85, 247, 0.10);
+    --specular-sheen: rgba(255, 255, 255, 0.30); /* Brilliant mirror edge */
   }
 
-  /* ================= WORLD-CLASS LIGHT MODE ================= */
-  body[data-theme="light"] {
-    --bg-primary: #f8fafc;                 /* Crisp slate-50 background */
-    --bg-surface: #ffffff;                 /* Pure crisp white card surface */
-    --bg-surface-elevated: #f1f5f9;        /* Elevated elements */
-    --bg-header: #f8fafc;                  /* Header action bars */
-    --bg-subtle: #f1f5f9;                  /* Subtle buttons & chip background */
-    --bg-subtle-hover: #e2e8f0;            /* Button hover */
-    --bg-input: #ffffff;                   /* White inputs */
-    --bg-terminal: #f8fafc;                /* Light clean terminal */
-    --bg-tab-active: #ffffff;              /* Active tab */
-    --border-color: #e2e8f0;               /* Clean slate border */
-    --border-subtle: #f1f5f9;
-    --border-input: #cbd5e1;               /* Clear visible input border */
-    --text-primary: #0f172a;               /* Deep slate-900 */
-    --text-secondary: #334155;             /* Readable slate-700 */
-    --text-muted: #64748b;                 /* Clear slate-500 */
-    --text-placeholder: #94a3b8;           /* Placeholder */
-    --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
-    --dot-color: rgba(15, 23, 42, 0.06);   /* Crisp micro dots */
-    --aurora-1: rgba(99, 102, 241, 0.10);  /* Soft studio aura */
-    --aurora-2: rgba(6, 182, 212, 0.08);
-    --card-bg: #ffffff;
-    --bar-bg: #f8fafc;
+  /* Light Mode: Academic Sage, Matcha & Cream Paper */
+  body[data-theme="light"], html[data-theme="light"] {
+    /* Color Palette */
+    --bg-primary: #f2f4ea;                     /* Pale Sage / Cream Linen Wash */
+    --bg-navbar: #faf9f2;                      /* Warm Ivory Paper Header */
+    --bg-secondary: #faf9f2;                   /* Secondary Paper Canvas */
+    --bg-tertiary: #e8eddf;                    /* Muted Tea-Green / Soft Olive Wash */
+    --bg-hover: #e8eddf;                       /* Hover Fill */
+    --bg-elevated: #faf9f2;                    /* Elevated Surfaces */
+    --bg-active-nav: #e8eddf;                  /* Active Pill Background */
+    --bg-surface: #faf9f2;
+    --bg-surface-elevated: #ffffff;
+    --bg-terminal: #faf9f2;
+    --bg-input: #ffffff;
+    --bg-card: rgba(250, 249, 242, 0.94);
+    --bg-header: rgba(250, 249, 242, 0.92);
+    --bar-bg: rgba(242, 244, 234, 0.96);
+    --bg-subtle: #e8eddf;
+    --bg-subtle-hover: #dce5d2;
+    --bg-tab-active: #ffffff;
+    
+    /* Botanical & Sage Accent Tokens */
+    --pale-sage: #dce5d2;
+    --soft-olive: #c5d4b8;
+    --primary-olive: #697951;
+    --deep-olive: #424f34;
+    
+    --accent-primary: #697951;
+    --accent-secondary: #424f34;
+    --accent-soft: #c5d4b8;
+    --accent-deep: #424f34;
+    --accent-ice: #697951;
+    --accent-subtle: rgba(105, 121, 81, 0.12);
+    --accent-emerald: #5b7a56;
+    --accent-amber: #8f7642;
+    --accent-gold: #8f7642;
+    --accent-rose: #8f5454;
+    
+    /* Hairline Cream & Olive Dividers */
+    --border-color: #d8dece;
+    --border-subtle: rgba(216, 222, 206, 0.70);
+    --border-hover: #c5d4b8;
+    --border-active: #697951;
+    --border-glow: #d8dece;
+    --border-input: #d8dece;
+    --border-shiny: rgba(105, 121, 81, 0.25);
+    
+    /* Typography & Contrast */
+    --text-primary: #292f25;                   /* Deep Forest Slate */
+    --text-secondary: #707568;                 /* Muted Olive Gray */
+    --text-muted: #707568;
+    --text-placeholder: #9ba192;
+    
+    /* Shadows & Atmospheric Spotlights */
+    --shadow-glass: 0 4px 16px rgba(41, 47, 37, 0.05);
+    --card-shadow: 0 10px 30px -4px rgba(41, 47, 37, 0.06), 0 2px 8px -2px rgba(41, 47, 37, 0.03);
+    --dot-color: rgba(41, 47, 37, 0.05);
+    --aurora-1: rgba(105, 121, 81, 0.08);
+    --aurora-2: rgba(92, 117, 80, 0.05);
+    --specular-sheen: rgba(255, 255, 255, 0.85);
+  }
+
+  /* Font System */
+  :root {
+    --font-sans: "Plus Jakarta Sans", "Manrope", system-ui, -apple-system, sans-serif;
+    --font-serif: "Fraunces", "STIX Two Text", Georgia, serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     transition: background-color 0.25s ease, color 0.25s ease;
   }
+
+  code, pre, kbd, samp {
+    font-family: var(--font-mono);
+  }
 }
 
-/* Custom sleek scrollbar */
+/* ================= SHINY GLASS & SPECULAR UTILITIES ================= */
+
+/* Glass Card with Specular Top Highlight */
+.apple-card {
+  position: relative;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+
+.apple-card.absolute {
+  position: absolute !important;
+}
+
+.apple-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--specular-sheen) 50%, transparent 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Shiny Interactive Button with Gloss Reflection */
+.apple-button-shiny {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 var(--specular-sheen);
+}
+
+.apple-button-shiny:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px var(--border-glow), inset 0 1px 0 var(--specular-sheen);
+}
+
+.apple-button-shiny:active {
+  transform: translateY(0.5px) scale(0.99);
+}
+
+/* Pill Segment Control & Shiny Segmented Tabs */
+.apple-segmented-pill {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  padding: 3px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .apple-segmented-pill {
+  box-shadow: inset 0 1px 2px rgba(41, 47, 37, 0.06);
+}
+
+.apple-tab-active {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 var(--specular-sheen) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+[data-theme="light"] .apple-tab-active {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f6ee 100%) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 2px 8px rgba(41, 47, 37, 0.08), inset 0 1px 0 #ffffff !important;
+}
+
+.apple-tab-inactive {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--text-secondary) !important;
+}
+
+.apple-tab-inactive:hover {
+  color: var(--text-primary) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+[data-theme="light"] .apple-tab-inactive:hover {
+  background: rgba(105, 121, 81, 0.08) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Shiny Metallic Text Gradients */
+.apple-shiny-text {
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .apple-shiny-text {
+  background: linear-gradient(135deg, #292f25 0%, #697951 50%, #292f25 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Shiny Chrome Gradient */
+.shiny-chrome-text {
+  background: linear-gradient(135deg, #ffffff 0%, #94a3b8 35%, #ffffff 70%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Themed Range Slider */
+input[type="range"].theme-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  outline: none;
+  background: linear-gradient(to right, #ffffff 0%, #ffffff var(--slider-pct, 50%), rgba(255, 255, 255, 0.12) var(--slider-pct, 50%), rgba(255, 255, 255, 0.12) 100%) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="light"] input[type="range"].theme-slider {
+  background: linear-gradient(to right, #697951 0%, #697951 var(--slider-pct, 50%), #dce2d2 var(--slider-pct, 50%), #dce2d2 100%) !important;
+  border-color: #d6dfcc !important;
+}
+
+input[type="range"].theme-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 2px 6px rgba(0, 0, 0, 0.8);
+  background: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+[data-theme="light"] input[type="range"].theme-slider::-webkit-slider-thumb {
+  box-shadow: 0 2px 5px rgba(41, 47, 37, 0.25);
+  background: #697951 !important;
+  border: 2px solid #ffffff !important;
+}
+
+/* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(150, 150, 150, 0.3);
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 9999px;
 }
 
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(105, 121, 81, 0.25);
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(150, 150, 150, 0.5);
+  background: rgba(255, 255, 255, 0.35);
 }
 
-/* Animations */
-@keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(105, 121, 81, 0.45);
 }
 
-.animate-spin-slow {
-  animation: spinSlow 8s linear infinite;
+/* ================= MODERN ULTRA-GLASSY DROPDOWN & PILLS ================= */
+.glassy-dropdown {
+  background: rgba(6, 6, 12, 0.82) !important;
+  backdrop-filter: blur(36px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.96), 0 0 25px rgba(255, 255, 255, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+[data-theme="light"] .glassy-dropdown {
+  background: rgba(250, 249, 242, 0.88) !important;
+  backdrop-filter: blur(36px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(200%) !important;
+  border: 1px solid rgba(216, 222, 206, 0.9) !important;
+  box-shadow: 0 20px 45px -8px rgba(41, 47, 37, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
+.glassy-trigger {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-@keyframes floatCard {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+.glassy-trigger:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
 }
 
-.animate-float-card {
-  animation: floatCard 6s ease-in-out infinite;
+[data-theme="light"] .glassy-trigger {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f6ee 100%) !important;
+  border: 1px solid #d8dece !important;
+  box-shadow: 0 1px 4px rgba(41, 47, 37, 0.08), inset 0 1px 0 #ffffff !important;
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 2.5s infinite;
+[data-theme="light"] .glassy-trigger:hover {
+  background: #ffffff !important;
+  border-color: #697951 !important;
 }

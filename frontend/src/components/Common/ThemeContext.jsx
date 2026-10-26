@@ -1,36 +1,15 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { THEMES } from '../../utils/themeConstants';
 
-export const THEMES = [
-  {
-    id: 'dark',
-    name: 'Dark Mode',
-    category: 'Dark',
-    description: 'Deep obsidian space with aurora violet & electric cyan highlights',
-    monacoTheme: 'codesphere-obsidian',
-    bg: '#030712',
-    surface: '#080c18',
-    text: '#f8fafc',
-    accent: '#6366f1'
-  },
-  {
-    id: 'light',
-    name: 'Light Mode',
-    category: 'Light',
-    description: 'Pristine paper-white developer studio with high-contrast typography',
-    monacoTheme: 'codesphere-light',
-    bg: '#f8fafc',
-    surface: '#ffffff',
-    text: '#0f172a',
-    accent: '#4f46e5'
-  }
-];
+export { THEMES };
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setThemeState] = useState(() => {
     try {
-      const saved = localStorage.getItem('codesphere_theme');
+      const saved = localStorage.getItem('compilex_theme') || localStorage.getItem('codesphere_theme');
       return saved === 'light' ? 'light' : 'dark';
     } catch {
       return 'dark';
@@ -48,7 +27,7 @@ export const ThemeProvider = ({ children }) => {
       document.documentElement.classList.add('dark');
     }
     try {
-      localStorage.setItem('codesphere_theme', theme);
+      localStorage.setItem('compilex_theme', theme);
     } catch (e) {
       console.error(e);
     }

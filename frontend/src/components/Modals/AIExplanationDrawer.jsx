@@ -13,14 +13,13 @@ export default function AIExplanationDrawer({
     explanation = "Your solution uses an efficient algorithm to process the input.",
     timeComplexity = "O(n)",
     spaceComplexity = "O(1)",
-    isOptimal = true,
     feedback = "Great job! Your solution is optimal."
   } = analysisData;
 
   return (
-    <div className="fixed inset-0 z-[9985] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm transition-all duration-300">
+    <div className="fixed inset-0 z-[9985] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md transition-all duration-300">
       <div 
-        className="w-full max-w-2xl border rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-slideUp transition-colors"
+        className="w-full max-w-2xl border rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[88vh] animate-slideUp transition-colors apple-card"
         style={{
           backgroundColor: 'var(--bg-surface-elevated)',
           borderColor: 'var(--border-color)',
@@ -28,44 +27,45 @@ export default function AIExplanationDrawer({
         }}
       >
         
-        {/* Header (Mockup Screen 9 style) */}
+        {/* Header */}
         <div 
-          className="flex items-center justify-between px-6 py-4 border-b select-none transition-colors"
+          className="flex items-center justify-between px-5 sm:px-6 py-4 border-b select-none transition-colors"
           style={{
-            backgroundColor: 'var(--bg-header)',
+            backgroundColor: 'var(--bar-bg)',
             borderColor: 'var(--border-color)'
           }}
         >
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-purple-500/20 text-purple-500 border border-purple-500/30">
+            <div className="p-2 rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/25">
               <Sparkles size={18} />
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                <span>AI Explanation</span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30 font-semibold">
-                  Gemini 2.5
+                <span>compileX AI Explanation</span>
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30 font-semibold">
+                  AI Judge
                 </span>
               </h2>
-              <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Automated algorithmic analysis & complexity metrics</p>
+              <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>Automated algorithmic complexity & optimization breakdown</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg opacity-70 hover:opacity-100 transition-colors cursor-pointer"
+            className="p-1.5 rounded-full opacity-70 hover:opacity-100 transition-colors cursor-pointer hover:bg-black/5 dark:hover:bg-white/10"
             style={{ color: 'var(--text-primary)' }}
+            aria-label="Close modal"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-6 text-sm">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 text-sm">
           
-          {/* Natural Language Explanation */}
+          {/* Approach & Intuition */}
           <div 
-            className="border rounded-xl p-4 sm:p-5 leading-relaxed space-y-3 font-sans transition-colors"
+            className="border rounded-2xl p-4 sm:p-5 leading-relaxed space-y-2 font-sans transition-colors"
             style={{
               backgroundColor: 'var(--bg-input)',
               borderColor: 'var(--border-input)',
@@ -73,90 +73,97 @@ export default function AIExplanationDrawer({
             }}
           >
             <h4 className="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 font-mono flex items-center gap-1.5">
+              <Lightbulb size={14} />
               <span>Intuition & Approach</span>
             </h4>
-            <p className="text-sm sm:text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            <p className="text-xs sm:text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               {explanation}
             </p>
           </div>
 
-          {/* Complexity Cards (Mockup Screen 9) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Time Complexity */}
+          {/* Complexity Metrics Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 font-mono">
+            {/* Time Complexity Card */}
             <div 
-              className="border rounded-xl p-4 flex items-center gap-3 transition-colors"
+              className="border rounded-2xl p-4 transition-colors apple-card"
               style={{
-                backgroundColor: 'rgba(99, 102, 241, 0.08)',
-                borderColor: 'rgba(99, 102, 241, 0.25)'
+                backgroundColor: 'var(--bg-subtle)',
+                borderColor: 'var(--border-color)'
               }}
             >
-              <div className="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-400">
-                <Clock size={20} />
+              <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-indigo-500">
+                <Clock size={15} />
+                <span>TIME COMPLEXITY</span>
               </div>
-              <div>
-                <span className="text-xs block font-mono" style={{ color: 'var(--text-muted)' }}>Time Complexity</span>
-                <span className="text-lg font-bold font-mono text-indigo-600 dark:text-indigo-300">
-                  {timeComplexity}
-                </span>
+              <div className="text-xl sm:text-2xl font-black" style={{ color: 'var(--text-primary)' }}>
+                {timeComplexity}
               </div>
+              <p className="text-[11px] font-sans mt-1" style={{ color: 'var(--text-muted)' }}>
+                Evaluation based on input size scaling and loops.
+              </p>
             </div>
 
-            {/* Space Complexity */}
+            {/* Space Complexity Card */}
             <div 
-              className="border rounded-xl p-4 flex items-center gap-3 transition-colors"
+              className="border rounded-2xl p-4 transition-colors apple-card"
               style={{
-                backgroundColor: 'rgba(6, 182, 212, 0.08)',
-                borderColor: 'rgba(6, 182, 212, 0.25)'
+                backgroundColor: 'var(--bg-subtle)',
+                borderColor: 'var(--border-color)'
               }}
             >
-              <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-600 dark:text-cyan-400">
-                <Database size={20} />
+              <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-cyan-500">
+                <Database size={15} />
+                <span>AUXILIARY SPACE</span>
               </div>
-              <div>
-                <span className="text-xs block font-mono" style={{ color: 'var(--text-muted)' }}>Space Complexity</span>
-                <span className="text-lg font-bold font-mono text-cyan-600 dark:text-cyan-300">
-                  {spaceComplexity}
-                </span>
+              <div className="text-xl sm:text-2xl font-black" style={{ color: 'var(--text-primary)' }}>
+                {spaceComplexity}
               </div>
-            </div>
-          </div>
-
-          {/* Feedback / Optimal Callout Banner (Mockup Screen 9 bottom pill) */}
-          <div 
-            className="rounded-xl p-4 border flex items-start gap-3 transition-all"
-            style={{
-              backgroundColor: isOptimal ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)',
-              borderColor: isOptimal ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'
-            }}
-          >
-            <div className={`p-1.5 rounded-lg shrink-0 mt-0.5
-              ${isOptimal ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400'}`}>
-              <Lightbulb size={18} />
-            </div>
-            <div>
-              <span className={`font-bold text-sm block mb-0.5
-                ${isOptimal ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-700 dark:text-amber-300'}`}>
-                {isOptimal ? "Optimal Solution Detected" : "Optimization Opportunity"}
-              </span>
-              <p className="text-xs sm:text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {feedback}
+              <p className="text-[11px] font-sans mt-1" style={{ color: 'var(--text-muted)' }}>
+                Heap and stack memory allocated beyond input buffer.
               </p>
             </div>
           </div>
+
+          {/* Verdict Feedback */}
+          {feedback && (
+            <div 
+              className="border rounded-2xl p-4 sm:p-5 flex items-start gap-3 transition-colors"
+              style={{
+                backgroundColor: isAccepted ? 'rgba(16, 185, 129, 0.06)' : 'rgba(244, 63, 94, 0.06)',
+                borderColor: isAccepted ? 'rgba(16, 185, 129, 0.25)' : 'rgba(244, 63, 94, 0.25)'
+              }}
+            >
+              <div className="p-1 rounded-full mt-0.5">
+                {isAccepted ? (
+                  <CheckCircle2 size={18} className="text-emerald-500" />
+                ) : (
+                  <AlertCircle size={18} className="text-rose-500" />
+                )}
+              </div>
+              <div className="flex-1 text-xs sm:text-sm">
+                <h5 className="font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
+                  {isAccepted ? "Optimal Implementation" : "Alternative Suggestion"}
+                </h5>
+                <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {feedback}
+                </p>
+              </div>
+            </div>
+          )}
 
         </div>
 
         {/* Footer */}
         <div 
-          className="px-6 py-3 border-t flex justify-end transition-colors"
+          className="px-5 sm:px-6 py-3 border-t flex justify-end transition-colors"
           style={{
-            backgroundColor: 'var(--bg-header)',
+            backgroundColor: 'var(--bar-bg)',
             borderColor: 'var(--border-color)'
           }}
         >
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+            className="px-5 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium text-xs sm:text-sm cursor-pointer shadow-md apple-button-shiny"
           >
             Done
           </button>

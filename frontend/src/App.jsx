@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from './components/Common/ThemeContext';
 import CompilerBackground from '../components/CompilerBg';
 import Navbar from './components/Navigation/Navbar';
-import SplashScreen from './components/Splash/SplashScreen';
 import NormalPlayground from './components/NormalMode/NormalPlayground';
 import DynamicCPMode from './components/CPMode/DynamicCPMode';
 import ExecutionLoaderModal from './components/Modals/ExecutionLoaderModal';
@@ -12,9 +11,6 @@ import { BOILERPLATES, CP_TEMPLATES, PRESETS } from './utils/cpPresets';
 import { API_BASE_URL } from './config';
 
 function MainApp() {
-  // Splash Screen state
-  const [showSplash, setShowSplash] = useState(true);
-
   // Navigation mode: 'normal' | 'cp'
   const [currentMode, setCurrentMode] = useState('normal');
 
@@ -55,31 +51,31 @@ function MainApp() {
   });
   const [lastJudgeResult, setLastJudgeResult] = useState(null);
 
-  // Execution Loader Modal state (Screen 8)
+  // Execution Loader Modal state
   const [loaderModal, setLoaderModal] = useState({
     isOpen: false,
     status: "compiling", // "compiling" | "accepted" | "wrong_answer" | "error"
     result: null
   });
 
-  // AI Explanation Drawer state (Screen 9)
+  // AI Explanation Drawer state
   const [aiDrawer, setAiDrawer] = useState({
     isOpen: false,
     data: null
   });
 
-  // Submissions History (Screen 10)
+  // Submissions History
   const [submissions, setSubmissions] = useState(() => {
     try {
-      const saved = localStorage.getItem('codesphere_submissions');
+      const saved = localStorage.getItem('compilex_submissions') || localStorage.getItem('codesphere_submissions');
       return saved ? JSON.parse(saved) : [
         {
           title: "Maximum Subarray (Kadane's)",
           status: "Accepted",
           language: "cpp",
-          executionTime: "0.3s",
+          executionTime: "0.28s",
           memory: "6.1 MB",
-          timestamp: "10 mins ago"
+          timestamp: "Recently"
         }
       ];
     } catch {
@@ -96,7 +92,7 @@ function MainApp() {
   // Sync submissions to local storage
   useEffect(() => {
     try {
-      localStorage.setItem('codesphere_submissions', JSON.stringify(submissions));
+      localStorage.setItem('compilex_submissions', JSON.stringify(submissions));
     } catch (e) {
       console.error(e);
     }
@@ -184,7 +180,7 @@ function MainApp() {
 
     setOutput(prev => ({
       ...prev,
-      systemLog: "Compiling code on engine...",
+      systemLog: "Compiling code in compileX engine...",
       success: null
     }));
 
@@ -357,7 +353,7 @@ function MainApp() {
         title: cpStatement.split('\n')[0].slice(0, 45) || "CP Problem",
         status: judgeData.isAccepted ? "Accepted" : (judgeData.status || "Wrong Answer"),
         language,
-        executionTime: judgeData.executionTime || "0.3s",
+        executionTime: judgeData.executionTime || "0.28s",
         memory: judgeData.memory || "6.1 MB",
         timestamp: "Just now"
       };
@@ -405,25 +401,17 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-slate-950 font-sans text-slate-200 antialiased selection:bg-purple-500/30 selection:text-purple-200 overflow-x-hidden flex flex-col">
-      {/* Splash Screen */}
-      {showSplash && (
-        <SplashScreen onFinish={() => setShowSplash(false)} />
-      )}
-
-      {/* Dynamic Animated Background */}
+    <div className="min-h-screen w-full font-sans antialiased overflow-x-hidden flex flex-col">
+      {/* Dynamic Animated Apple Studio Background */}
       <CompilerBackground>
-        <div className={`flex flex-col w-full min-h-screen transition-all duration-700 ease-out
-          ${showSplash ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}
-        >
+        <div className="flex flex-col w-full min-h-screen">
           
-          {/* Universal Navbar */}
+          {/* Universal Apple Navbar */}
           <Navbar 
             currentMode={currentMode}
             setMode={setCurrentMode}
             onOpenHistory={() => setShowHistoryModal(true)}
             submissionCount={submissions.length}
-            onReplaySplash={() => setShowSplash(true)}
             serverOnline={serverOnline}
           />
 
@@ -471,7 +459,7 @@ function MainApp() {
         </div>
       </CompilerBackground>
 
-      {/* Screen 8: Animated Execution & Compilation Loader Modal */}
+      {/* Animated Execution & Compilation Modal */}
       <ExecutionLoaderModal
         isOpen={loaderModal.isOpen}
         status={loaderModal.status}
@@ -485,14 +473,14 @@ function MainApp() {
         }}
       />
 
-      {/* Screen 9: AI Explanation & Complexity Drawer */}
+      {/* AI Explanation & Complexity Drawer */}
       <AIExplanationDrawer
         isOpen={aiDrawer.isOpen}
         onClose={() => setAiDrawer({ isOpen: false, data: null })}
         analysisData={aiDrawer.data}
       />
 
-      {/* Screen 10: Submission History Modal */}
+      {/* Submission History Modal */}
       <SubmissionsModal
         isOpen={showHistoryModal}
         onClose={() => setShowHistoryModal(false)}
